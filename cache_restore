@@ -1,0 +1,32 @@
+#!/bin/sh
+
+for cache_group in "$@"
+do
+  case $cache_group in
+
+  rails)
+    cache restore nvm-$SEMAPHORE_GIT_BRANCH-$(checksum .nvmrc),nvm-$SEMAPHORE_GIT_BRANCH,nvm-develop,nvm-master
+    cache restore gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),gems-$SEMAPHORE_GIT_BRANCH,gems-develop,gems-master
+    cache restore yarn-cache-$SEMAPHORE_GIT_BRANCH-$(checksum yarn.lock),yarn-cache-$SEMAPHORE_GIT_BRANCH,yarn-cache-develop,yarn-cache-master
+    cache restore node-modules-$SEMAPHORE_GIT_BRANCH-$(checksum yarn.lock),node-modules-$SEMAPHORE_GIT_BRANCH,node-modules-develop,node-modules-master
+    ;;
+
+  python)
+    cache restore requirements-$SEMAPHORE_GIT_BRANCH-$(checksum lib/image_processing/requirements.txt),requirements-$SEMAPHORE_GIT_BRANCH,requirements-develop,requirements-master
+    ;;
+
+  assets)
+    cache restore packs-$SEMAPHORE_GIT_BRANCH,packs-develop,packs-master
+    cache restore packstest-$SEMAPHORE_GIT_BRANCH,packstest-develop,packstest-master
+    cache restore assets-$SEMAPHORE_GIT_BRANCH,assets-develop,assets-master
+    cache restore sprocketscache-$SEMAPHORE_GIT_BRANCH,sprocketscache-develop,sprocketscache-master
+    cache restore webpackercache-$SEMAPHORE_GIT_BRANCH,webpackercache-develop,webpackercache-master
+    ;;
+
+  *)
+    echo "Invalid argument: Cache group $cache_group not found."
+    exit 1
+    ;;
+  esac
+done
+
